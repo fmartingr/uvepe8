@@ -1,0 +1,14 @@
+{
+    "fps": 30,
+    "safe_timing": true,
+    "frames": [
+        {
+            "diff": [
+                [video_x, video_y, diff_x, diff_y, size_x, size_y],
+                ["..."]
+            ],
+            "jump": 3
+        }
+    ]
+}
+
