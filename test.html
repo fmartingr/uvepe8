@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        body {
+            background-color: green;
+        }
+
+        .test {
+            position: relative;
+            width: 250px;
+            height: 250px;
+        }
+
+        .test .diff {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+    </style>
+</head>
+<body>
+    <!--<embed src="test.mov" width="250" height="250" style="background: transparent;"></embed><br />-->
+    Diff:<br />
+    <img src="test/test_2.png" /> -- <img src="test/test_100.png" /> -- <img src="diff.png" />
+    <div class="test">
+        <img class="original" src="test/test_2.png" />
+        <img class="diff" src="diff.png" />
+    </div>
+
+
+</body>
+</html>
