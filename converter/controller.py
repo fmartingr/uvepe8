@@ -47,12 +47,19 @@ class DiffController(Controller):
     current = -1
     items = []
 
+    total = {
+        "width": 0,
+        "height": 0
+    }
+
     def append(self, object):
         new_item = Diff(self, object['image'],
             object['position'][0],
             object['position'][1],
             object['size'][0],
             object['size'][1])
+        self.total["width"] += object["size"][0]
+        self.total["height"] += object["size"][1]
         new_item.hash = object['hash']
         self.items.append(new_item)
         self.current += 1
