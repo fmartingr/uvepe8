@@ -73,3 +73,5 @@ class DiffController(Controller):
                     return self.items.index(item)
         return None
 
+    def sort_by_size(self):
+        self.items.sort(key=lambda x: x.size, reverse=True)
