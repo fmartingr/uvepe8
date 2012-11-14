@@ -1,2 +1,5 @@
 /.idea/
 /.DS_Store
+/test*
+/test.html
+*.pyc
