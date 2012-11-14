@@ -1,5 +1,15 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+###
+# UVEPE8
+# Author:       Felipe "Pyron" Martín (@fmartingr)
+# Usage:		uvepe8.py -h
+# Notes:		See README
+###
+
+import argparse
 from controller import FrameController, DiffController
-#from diff_methods import *
 import glob
 from sys import stdout
 
@@ -13,65 +23,73 @@ def echo(string, cr=True, newline=True):
     stdout.write(string)
     if newline: stdout.write("\n")
 
-# Export as animation in keynote. Quicktime Lossless RGBA
-# Conversion: ffmpeg -i animation.mov -y -vcodec png -pix_fmt rgba test/test_%4d.png
+parser = argparse.ArgumentParser(description="Your videos, now in <canvas>", )
 
-# Javascript set timeout:
-# DELAY TIMING
-# Put setTimeout before exec any code, so timing will be more accurate
+# Required arguments
+parser.add_argument('folder', help="Folder with the PNG frames", )
+parser.add_argument('name', help="Animation name", )
 
-# Globals
-# Original video FPS
-FPS = 30 # Delay timing = 60*1000/FPS miliseconds
+# Optional arguments
+parser.add_argument('-fps', default=30, help="FPS (default: 30)", )
+parser.add_argument('-t', '--filetype', default="png", help="Frame filetype (default png)")
+parser.add_argument('-c', '--compress', help="Compress PNG with pngcrush", action="store_true", )
 
+# Parsing
+argument = parser.parse_args()
+
+# Trailing slash fix
+if argument.folder[-1] is "/":
+    argument.folder = argument.folder[:-1]
+
+# Getting files info
+PATH = "%s/*.%s" % (argument.folder, argument.filetype)
+FILES = glob.glob(PATH)
+TOTAL_FILES = len(FILES)
+
+if TOTAL_FILES is 0:
+    print "Cannot find frames on that folder: %s" % PATH
+    quit(1)
+
+# Staring the controllers
 FRAMES = FrameController()
 DIFFS = DiffController()
 
-DIR = '../test/'
-FILETYPE = 'png'
-FILES = glob.glob("%s*.%s" % (DIR, FILETYPE))
-
-WIDTH = 250 # TODO
-HEIGHT = WIDTH # TODO
-
-ANIMATION = {
-    "fps": FPS,
-    "image": None,
-    "width": WIDTH,
-    "height": HEIGHT
-}
-
-TOTAL_FILES = len(FILES)
+# Starting the loop
 CURRENT_FILE = 1
 echo("%10s %8s " % ("FRAMES", "DIFFS"))
 for file in FILES:
     if FRAMES.current is -1:
-        # First frame is just original one
+        # First frame, just append it.
         FRAMES.append(file)
     else:
-        # Checking for diffs. Bitches LOVE diffs
+        # Checking for diffs. Bitches LOVE diffs.
         FRAMES.append(file)
         diffs = FRAMES.get_current().get_difference()
         if not diffs:
+            # If frame dont have any difference with the previous one
+            # just add a frame jump in the previous frame.
+            # The player will handle the rest.
             FRAMES.get_previous().jump += 1
             FRAMES.remove(FRAMES.get_current())
         else:
+            # Ooops. We found some diffs.
             for diff in diffs:
+                # Checking if we have something similar in our diff list.
                 diff_number = DIFFS.find_hash(diff['hash'])
                 if diff_number is None:
+                    # If not... just append it.
                     DIFFS.append(diff)
                     diff_number = DIFFS.current
+                # Assign the diff list key to the current frame
                 FRAMES.get_current().diff.append(diff_number)
+    # Pretty logging is pretty. <3
     echo("%10s %8s Processing..." % ("%d/%d" % (CURRENT_FILE, TOTAL_FILES), len(DIFFS.items)), True, False)
     CURRENT_FILE += 1
 
+# Summary
 print ""
 print "-- Summary --"
 print "Total frames: %d" % TOTAL_FILES
 print "Total frames saved: %d" % len(FRAMES.items)
 print "Total diffs saved: %d" % len(DIFFS.items)
 print ""
-
-#print FRAMES.items
-
-
