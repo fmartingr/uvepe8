@@ -30,6 +30,9 @@ parser.add_argument('folder', help="Folder with the PNG frames", )
 parser.add_argument('name', help="Animation name", )
 
 # Optional arguments
+#parser.add_argument('-m', '--diff-method', default="Simple",
+#    help="Diff method (default: Simple)",
+#    choices=['Simple'])
 parser.add_argument('-fps', default=30, help="FPS (default: 30)", )
 parser.add_argument('-t', '--filetype', default="png", help="Frame filetype (default png)")
 parser.add_argument('-c', '--compress', help="Compress PNG with pngcrush", action="store_true", )
