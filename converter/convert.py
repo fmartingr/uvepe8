@@ -96,3 +96,50 @@ print "Total frames: %d" % TOTAL_FILES
 print "Total frames saved: %d" % len(FRAMES.items)
 print "Total diffs saved: %d" % len(DIFFS.items)
 print ""
+
+class DiffMatrix(object):
+    # http://codeincomplete.com/posts/2011/5/7/bin_packing/
+    min_x = 0
+    min_y = 0
+
+    max_x = 0
+    max_y = 0
+
+    nodes = [] # (diff key, x, y, size x, size y)
+
+    def __init__(self, width=0, height=0):
+        self.max_x = width
+        self.max_y = height
+
+    def add_node(self, node):
+        # node: (diff key, x, y, size x, size y)
+        self.nodes.append(node)
+
+    def find_position(self, size_x, size_y):
+
+        pass
+
+    def is_occupied(self, x, y):
+        for node in self.nodes:
+            # Check if pixel is inside this node's square
+            if node[1] <= x <= node[1] + node[3]:
+                if node[2] <= y <= node[2] + node[4]:
+                    return True
+        return False
+
+
+# Sort DIFFs by size
+DIFFS.sort_by_size()
+
+for diff in DIFFS.items:
+    pass
+    #print diff.hash
+    #diff.image.save("../diff/" + diff.hash + '.png')
+
+if DIFFS.total['width'] >= DIFFS.total['height']:
+    MATRIX = DiffMatrix(width=DIFFS.total['width'])
+else:
+    MATRIX = DiffMatrix(height=DIFFS.total['height'])
+
+
+
