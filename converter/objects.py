@@ -34,6 +34,12 @@ class Diff(object):
         if self.have_image():
             self.hash = None
 
+    def width(self):
+        return self.size[0]
+
+    def height(self):
+        return self.size[1]
+
 
 class Frame(object):
     """
