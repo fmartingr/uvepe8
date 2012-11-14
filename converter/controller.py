@@ -69,7 +69,7 @@ class DiffController(Controller):
         # *What do we say to redundancy? Not today*
         if len(self.items) > 0:
             for item in self.items:
-                if item.hash is hash:
-                    print "FOUND ONE REPEATED! :D"
+                if item.hash == hash:
                     return self.items.index(item)
         return None
+

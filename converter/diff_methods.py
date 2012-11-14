@@ -16,11 +16,18 @@ class SimpleMethod(DiffMethod):
         diff_box = difference.getbbox()
         diffs = []
         if diff_box is not None:
+            # If there is any difference, just retrieve the box
+            # that has changed in the new frame
+            image = first.crop((diff_box[0],
+                                     diff_box[1],
+                                     diff_box[2],
+                                     diff_box[3]))
             size = (diff_box[2] - diff_box[0], diff_box[3] - diff_box[1])
             position = (diff_box[0], diff_box[1])
+            hash = str(md5(image.tostring()).hexdigest())
             diff = {
-                "hash": md5(difference.tostring()).hexdigest(),
-                "image": difference,
+                "hash": hash,
+                "image": image,
                 "position": position,
                 "size": size
             }
