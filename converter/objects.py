@@ -48,7 +48,7 @@ class Frame(object):
     """
     path = None
     image = None
-    diff = [] # (diff key, position x, position y)
+    diff = [] # (diff hash, position x, position y, size x, size y)
     jump = 0
 
     # Internal
