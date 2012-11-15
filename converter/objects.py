@@ -7,14 +7,14 @@ class Diff(object):
     """
     hash = None
     image = None
-    position = () # Diff position in the complete image
+    position = () # Diff position in the complete image (final png)
     size = () # Size of the image (diff)
-    image_position = () # Position on the original image (where the diff goes)
+    #image_position = () # Position on the original image (where the diff goes)
 
     # Internals
     controller = None
 
-    def __init__(self, parent_object, image, x, y, width, height):
+    def __init__(self, parent_object, image, width, height):
         self.controller = parent_object
         self.image = image
         self.hash = hash
@@ -48,7 +48,7 @@ class Frame(object):
     """
     path = None
     image = None
-    diff = []
+    diff = [] # (diff key, position x, position y)
     jump = 0
 
     # Internal

@@ -84,7 +84,7 @@ for file in FILES:
                     DIFFS.append(diff)
                     diff_number = DIFFS.current
                 # Assign the diff list key to the current frame
-                FRAMES.get_current().diff.append(diff_number)
+                FRAMES.get_current().diff.append((diff_number, diff['position'][0], diff['position'][1]))
     # Pretty logging is pretty. <3
     echo("%10s %8s Processing..." % ("%d/%d" % (CURRENT_FILE, TOTAL_FILES), len(DIFFS.items)), True, False)
     CURRENT_FILE += 1

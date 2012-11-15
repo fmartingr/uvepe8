@@ -26,10 +26,10 @@ class SimpleMethod(DiffMethod):
             position = (diff_box[0], diff_box[1])
             hash = str(md5(image.tostring()).hexdigest())
             diff = {
-                "hash": hash,
-                "image": image,
-                "position": position,
-                "size": size
+                "hash": hash, # Hash of the diff for checking if portion is repeated (md5 string)
+                "image": image, # Portion of the image <Image>
+                "position": position, # Position of the portion in the frame (x, y)
+                "size": size # Size of the portion (x, y)
             }
             diffs.append(diff)
 
