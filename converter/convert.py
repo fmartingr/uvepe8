@@ -12,6 +12,7 @@ import argparse
 from controller import FrameController, DiffController
 import glob
 from sys import stdout
+#from random import randint
 
 def echo(string, cr=True, newline=True):
     """
@@ -101,48 +102,66 @@ print "Total diffs saved: %d" % len(DIFFS.items)
 print ""
 
 class DiffMatrix(object):
-    # http://codeincomplete.com/posts/2011/5/7/bin_packing/
     min_x = 0
     min_y = 0
 
     max_x = 0
     max_y = 0
 
-    nodes = [] # (diff key, x, y, size x, size y)
+    squares = [] # (diff key, x, y, size x, size y)
 
-    def __init__(self, width=0, height=0):
+    algorithm = None
+    controller = None
+
+    def __init__(self, width=0, height=0, algorithm='BinaryTree', controller=None):
+        # Load algorithm
+        module = __import__("algorithm")
+        try:
+            algorithm = getattr(module, "%sAlgorithm" % algorithm)
+        except Exception:
+            print "Cant load %s algorithm, using BinaryTree..." % algorithm
+            algorithm = getattr(module, "BinaryTreeAlgorithm")
         self.max_x = width
         self.max_y = height
+        self.algorithm = algorithm(self.max_x, self.max_y)
+        if controller is not None:
+            self.controller = controller
 
-    def add_node(self, node):
-        # node: (diff key, x, y, size x, size y)
-        self.nodes.append(node)
+    def add(self, diff):
+        """
+        Uses the selected algorithm to add a diff image to the group
+        diff = tuple(diff key, width, height)
+        """
+        self.squares.append(self.algorithm.append(diff))
 
-    def find_position(self, size_x, size_y):
+    def create_image(self):
+        final_image = Image.new('RGBA', self.algorithm.get_total_size())
+        for square in self.squares:
+            if square[0] == "first_frame":
+                box = (0, 0)
+                image = FRAMES.items[0].image
+            else:
+                diff = self.controller.items[self.controller.find_hash(square[0])]
+                box = (square[1], square[2], square[1] + diff.size[0], square[2] + diff.size[1])
+                image = diff.image
+                #final_image.paste((randint(0, 255), randint(0, 255), randint(0, 255)), box)
+            final_image.paste(image, box)
 
-        pass
+        final_image.save("%s.png" % argument.name)
 
-    def is_occupied(self, x, y):
-        for node in self.nodes:
-            # Check if pixel is inside this node's square
-            if node[1] <= x <= node[1] + node[3]:
-                if node[2] <= y <= node[2] + node[4]:
-                    return True
-        return False
 
 
 # Sort DIFFs by size
 DIFFS.sort_by_size()
-
-for diff in DIFFS.items:
-    pass
-    #print diff.hash
-    #diff.image.save("../diff/" + diff.hash + '.png')
+#for diff in DIFFS.items:
+#    print diff.size
 
 if DIFFS.total['width'] >= DIFFS.total['height']:
-    MATRIX = DiffMatrix(width=DIFFS.total['width'])
+    MATRIX = DiffMatrix(width=FRAMES.items[0].image.size[0], controller=DIFFS)
 else:
-    MATRIX = DiffMatrix(height=DIFFS.total['height'])
+    MATRIX = DiffMatrix(height=FRAMES.items[0].image.size[1], controller=DIFFS)
 
-
+# First frame
+first_frame = ("first_frame", FRAMES.items[0].image.size[0], FRAMES.items[0].image.size[1])
+MATRIX.add(first_frame)
 
