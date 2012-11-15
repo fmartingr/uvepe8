@@ -7,7 +7,8 @@ class Controller(object):
     items = []
 
     def get_current(self):
-        return self.items[self.current]
+        if self.current >= 0:
+            return self.items[self.current]
 
     def get_previous(self):
         if self.current > 0:
