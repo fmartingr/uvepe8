@@ -59,7 +59,6 @@ DIFFS = DiffController()
 
 # Starting the loop
 CURRENT_FILE = 1
-echo("%10s %8s " % ("FRAMES", "DIFFS"))
 for file in FILES:
     if FRAMES.current is -1:
         # First frame, just append it.
@@ -90,7 +89,7 @@ for file in FILES:
                                               diff['size'][0],
                                               diff['size'][1]))
     # Pretty logging is pretty. <3
-    echo("%10s %8s Processing..." % ("%d/%d" % (CURRENT_FILE, TOTAL_FILES), len(DIFFS.items)), True, False)
+    echo("Processing frame (%s)" % ("%d/%d" % (CURRENT_FILE, TOTAL_FILES)), True, False)
     CURRENT_FILE += 1
 
 # Summary
