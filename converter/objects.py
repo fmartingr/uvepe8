@@ -60,9 +60,13 @@ class Frame(object):
         if not self.opened():
             self.image = Image.open(path)
             self.path = path
+        self.diff = []
 
     def opened(self):
         return self.image is not None
+
+    def add_diff(self, diff):
+        self.diff.append(diff)
 
     def get_difference(self):
         if self.difference is None:
