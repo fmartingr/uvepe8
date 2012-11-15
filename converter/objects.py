@@ -18,14 +18,14 @@ class Diff(object):
         self.controller = parent_object
         self.image = image
         self.hash = hash
-        self.set_original_position(x, y, width, height)
+        self.size = (width, height)
+        #self.set_original_position(x, y, width, height)
 
     def set_position(self, x, y):
         self.position = (x, y)
 
-    def set_original_position(self, x, y, width, height):
-        self.image_position = (x, y)
-        self.size = (width, height)
+#    def set_original_position(self, x, y, width, height):
+#        self.image_position = (x, y)
 
     def have_image(self):
         return self.image is not None
