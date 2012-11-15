@@ -12,7 +12,9 @@ import argparse
 from controller import FrameController, DiffController
 import glob
 from sys import stdout
+import Image
 #from random import randint
+import json
 
 def echo(string, cr=True, newline=True):
     """
@@ -165,3 +167,31 @@ else:
 first_frame = ("first_frame", FRAMES.items[0].image.size[0], FRAMES.items[0].image.size[1])
 MATRIX.add(first_frame)
 
+# Add Diffs
+for diff in DIFFS.items:
+    block = (diff.hash, diff.width(), diff.height())
+    MATRIX.add(block)
+MATRIX.create_image()
+
+#json.dumps
+animation = {
+    "fps": argument.fps,
+    "image": "%s" % argument.name,
+    "width": FRAMES.items[0].image.size[0],
+    "height": FRAMES.items[0].image.size[1],
+    #"safe_timing": True,
+    "frames": []
+}
+
+for frame in FRAMES.items:
+    #print len(frame.diff)
+    frame = {
+        "diff": frame.diff,
+        "jump": frame.jump
+    }
+    animation['frames'].append(frame)
+
+json = json.dumps(animation)
+file = open("%s.json" % argument.name, "w")
+file.write(json)
+file.close()
