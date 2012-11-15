@@ -3,3 +3,4 @@
 /test*
 /test.html
 *.pyc
+.DS_Store
