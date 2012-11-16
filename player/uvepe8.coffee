@@ -5,23 +5,25 @@
 ###
 
 uvepe8 = (dom_object, animation, autostart) ->
-  options =
-    dom: ""
-    width: ""
-    height: ""
-    frames: ""
-    image: ""
-    fps: ""
+  #options =
+  #  dom: ""
+  #  width: ""
+  #  height: ""
+  #  frames: ""
+  #  image: ""
+  #  fps: ""
+  #  log
 
   if not (@ instanceof uvepe8)
     new uvepe8(dom_object, animation, autostart)
   else
     @init(dom_object, animation, autostart)
 
-uvepe8.prototype =
-  foo: ->
-    true
-
+uvepe8.prototype = 
+  log: (string) ->
+    if @options.log?
+      console.log string
+  
   find_framework: ->
     if jQuery? or Zepto?
       @framework = $
@@ -37,12 +39,14 @@ uvepe8.prototype =
 
   draw_canvas: ->
     empty_array = []
-    console.log "Draw frame " + @current_frame
+    @log "Draw frame " + @current_frame
     frame = @get_frame(@current_frame)
     if frame isnt null
-      if frame.diff.length > 0 # Avoid first frame
+      if @current_frame is 0 # First frame
+        @buffer_context.drawImage(@image, 0, 0, @options.width, @options.height, 0, 0, @options.width, @options.height)
+      else
         for diff in frame.diff
-          console.log diff
+          @log diff
           source_x = diff[2]
           source_y = diff[3]
           width = diff[4]
@@ -51,11 +55,11 @@ uvepe8.prototype =
           destiny_y = diff[1]
           @buffer_context.clearRect destiny_x, destiny_y, width, height
           @buffer_context.drawImage(@image, source_x, source_y, width, height, destiny_x, destiny_y, width, height)
-        @dom_context.clearRect 0, 0, @options.width, @options.height
-        @dom_context.drawImage @buffer_element, 0, 0
+      @dom_context.clearRect 0, 0, @options.width, @options.height
+      @dom_context.drawImage @buffer_element, 0, 0
 
   draw_fallback: ->
-    console.log 'fallback'
+    @log 'fallback'
 
   get_frame: (number) ->
     if @options.frames[number]?
@@ -68,7 +72,7 @@ uvepe8.prototype =
     if frame isnt null
       timeout = @options.timeout
       timeout = timeout*frame.jump if frame.jump?
-      console.log "Frame: #{@current_frame} with timeout: #{timeout}"
+      @log "Frame: #{@current_frame} with timeout: #{timeout}"
       setTimeout(=>
         @draw()
       , timeout)
@@ -78,9 +82,11 @@ uvepe8.prototype =
         @draw_fallback()
       @current_frame++
 
-
   play: ->
-    @draw()
+    if @image_loaded
+      @draw()
+    else
+      console.error "[Image is not loaded! (is probably loading...)]"
 
   create_canvas: ->
     document.createElement 'canvas'
@@ -110,16 +116,18 @@ uvepe8.prototype =
       @dom = @framework(@options.dom)
       @options.timeout = (1000/@options.fps)
       @image = new Image()
-      @image.src = @options.image
       @dom.css
         width: @options.width
         height: @options.height
         #background: 'url(' + @options.image + ')'
         @start_canvas() if @use_canvas
+      @image.src = @options.image
+
       #else
-        # Create fallback div
-      if autostart
-        @play()
+      # Create fallback div
+      @image.onload = =>
+        @image_loaded = true
+        @play() if autostart
     @
 
 window.uvepe8 = uvepe8

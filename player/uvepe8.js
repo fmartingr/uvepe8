@@ -11,15 +11,6 @@
   var uvepe8;
 
   uvepe8 = function(dom_object, animation, autostart) {
-    var options;
-    options = {
-      dom: "",
-      width: "",
-      height: "",
-      frames: "",
-      image: "",
-      fps: ""
-    };
     if (!(this instanceof uvepe8)) {
       return new uvepe8(dom_object, animation, autostart);
     } else {
@@ -28,8 +19,10 @@
   };
 
   uvepe8.prototype = {
-    foo: function() {
-      return true;
+    log: function(string) {
+      if (this.options.log != null) {
+        return console.log(string);
+      }
     },
     find_framework: function() {
       if ((typeof jQuery !== "undefined" && jQuery !== null) || (typeof Zepto !== "undefined" && Zepto !== null)) {
@@ -51,14 +44,16 @@
     draw_canvas: function() {
       var destiny_x, destiny_y, diff, empty_array, frame, height, source_x, source_y, width, _i, _len, _ref;
       empty_array = [];
-      console.log("Draw frame " + this.current_frame);
+      this.log("Draw frame " + this.current_frame);
       frame = this.get_frame(this.current_frame);
       if (frame !== null) {
-        if (frame.diff.length > 0) {
+        if (this.current_frame === 0) {
+          this.buffer_context.drawImage(this.image, 0, 0, this.options.width, this.options.height, 0, 0, this.options.width, this.options.height);
+        } else {
           _ref = frame.diff;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             diff = _ref[_i];
-            console.log(diff);
+            this.log(diff);
             source_x = diff[2];
             source_y = diff[3];
             width = diff[4];
@@ -68,13 +63,13 @@
             this.buffer_context.clearRect(destiny_x, destiny_y, width, height);
             this.buffer_context.drawImage(this.image, source_x, source_y, width, height, destiny_x, destiny_y, width, height);
           }
-          this.dom_context.clearRect(0, 0, this.options.width, this.options.height);
-          return this.dom_context.drawImage(this.buffer_element, 0, 0);
         }
+        this.dom_context.clearRect(0, 0, this.options.width, this.options.height);
+        return this.dom_context.drawImage(this.buffer_element, 0, 0);
       }
     },
     draw_fallback: function() {
-      return console.log('fallback');
+      return this.log('fallback');
     },
     get_frame: function(number) {
       if (this.options.frames[number] != null) {
@@ -92,7 +87,7 @@
         if (frame.jump != null) {
           timeout = timeout * frame.jump;
         }
-        console.log("Frame: " + this.current_frame + " with timeout: " + timeout);
+        this.log("Frame: " + this.current_frame + " with timeout: " + timeout);
         setTimeout(function() {
           return _this.draw();
         }, timeout);
@@ -105,7 +100,11 @@
       }
     },
     play: function() {
-      return this.draw();
+      if (this.image_loaded) {
+        return this.draw();
+      } else {
+        return console.error("[Image is not loaded! (is probably loading...)]");
+      }
     },
     create_canvas: function() {
       return document.createElement('canvas');
@@ -122,6 +121,7 @@
       return this.buffer_context = this.buffer_element.getContext('2d');
     },
     init: function(dom_object, animation, autostart) {
+      var _this = this;
       if (autostart == null) {
         autostart = true;
       }
@@ -137,14 +137,17 @@
         this.dom = this.framework(this.options.dom);
         this.options.timeout = 1000 / this.options.fps;
         this.image = new Image();
-        this.image.src = this.options.image;
         this.dom.css({
           width: this.options.width,
           height: this.options.height
         }, this.use_canvas ? this.start_canvas() : void 0);
-        if (autostart) {
-          this.play();
-        }
+        this.image.src = this.options.image;
+        this.image.onload = function() {
+          _this.image_loaded = true;
+          if (autostart) {
+            return _this.play();
+          }
+        };
       }
       return this;
     }
