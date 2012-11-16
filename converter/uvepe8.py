@@ -203,5 +203,5 @@ for frame in FRAMES.items:
 
 json = json.dumps(animation)
 file = open("%s.json" % argument.name, "w")
-file.write(json)
+file.write("%s = %s" % (argument.name, json))
 file.close()
