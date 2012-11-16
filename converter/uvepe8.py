@@ -25,6 +25,7 @@ def echo(string, cr=True, newline=True):
     if cr: stdout.write("\r")
     stdout.write(string)
     if newline: stdout.write("\n")
+    stdout.flush()
 
 parser = argparse.ArgumentParser(description="Your videos, now in <canvas>", )
 
