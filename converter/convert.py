@@ -144,6 +144,7 @@ class DiffMatrix(object):
                 image = FRAMES.items[0].image
             else:
                 diff = self.controller.items[self.controller.find_hash(square[0])]
+                diff.set_position(square[1], square[2])
                 box = (square[1], square[2], square[1] + diff.size[0], square[2] + diff.size[1])
                 image = diff.image
                 #final_image.paste((randint(0, 255), randint(0, 255), randint(0, 255)), box)
@@ -176,7 +177,7 @@ MATRIX.create_image()
 #json.dumps
 animation = {
     "fps": argument.fps,
-    "image": "%s" % argument.name,
+    "image": "%s.png" % argument.name,
     "width": FRAMES.items[0].image.size[0],
     "height": FRAMES.items[0].image.size[1],
     #"safe_timing": True,
@@ -184,12 +185,21 @@ animation = {
 }
 
 for frame in FRAMES.items:
-    #print len(frame.diff)
-    frame = {
-        "diff": frame.diff,
-        "jump": frame.jump
+    diffs = []
+    for diff in frame.diff:
+        original = DIFFS.items[DIFFS.find_hash(diff[0])]
+        diffs.append((diff[1],
+                      diff[2],
+                      original.position[0],
+                      original.position[1],
+                      diff[3],
+                      diff[4]))
+    this_frame = {
+        "diff": diffs,
     }
-    animation['frames'].append(frame)
+    if frame.jump > 0:
+        this_frame['jump'] = frame.jump
+    animation['frames'].append(this_frame)
 
 json = json.dumps(animation)
 file = open("%s.json" % argument.name, "w")
