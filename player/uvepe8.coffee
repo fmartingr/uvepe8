@@ -27,10 +27,8 @@ uvepe8.prototype =
   find_framework: ->
     if jQuery? or Zepto?
       @framework = $
-    if Quo?
-      @framework = $$
     if not @framework?
-      throw "[Can't found compatible framwork. Please include Zepto, jQuery or QuoJS.]"
+      throw "[Can't found compatible framwork. Please include Zepto or jQuery.]"
     true
 
   canvas_supported: ->

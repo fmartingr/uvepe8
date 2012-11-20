@@ -28,11 +28,8 @@
       if ((typeof jQuery !== "undefined" && jQuery !== null) || (typeof Zepto !== "undefined" && Zepto !== null)) {
         this.framework = $;
       }
-      if (typeof Quo !== "undefined" && Quo !== null) {
-        this.framework = $$;
-      }
       if (!(this.framework != null)) {
-        throw "[Can't found compatible framwork. Please include Zepto, jQuery or QuoJS.]";
+        throw "[Can't found compatible framwork. Please include Zepto or jQuery.]";
       }
       return true;
     },
