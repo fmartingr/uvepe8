@@ -39,7 +39,7 @@
     canvas_supported: function() {
       var element;
       element = this.create_canvas();
-      return !!(element.getContext() && element.getContext('2d'));
+      return !!(element.getContext('2d'));
     },
     draw_canvas: function() {
       var destiny_x, destiny_y, diff, empty_array, frame, height, source_x, source_y, width, _i, _len, _ref;

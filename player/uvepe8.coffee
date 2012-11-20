@@ -35,7 +35,7 @@ uvepe8.prototype =
 
   canvas_supported: ->
     element = @create_canvas()
-    not not (element.getContext() and element.getContext('2d'))
+    not not (element.getContext('2d'))
 
   draw_canvas: ->
     empty_array = []
