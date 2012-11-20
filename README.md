@@ -19,8 +19,8 @@ Remember, still working on it.
 The converters look in the frames of the video for differences, based on the selected algorithm (see [Algorithms](#TODO)). It's output is a PNG file with the original frame and all the differences between the rest of the frames.
 Also a JSON file that contains the timeline info (every frame that needs to be drawn).
 
-### The player
-
+#### The player
+Just get the json timeline and the final PNG and draws the first frame and the subsequent diffs.
 
 ## Quick usage
 
@@ -43,22 +43,20 @@ The script have generated an `my_animation.json` and `my_animation.png` files, n
 
 For por information on the converter, `python uvepe8.py -h` or look at the code
 
-4) Edit your HTML and include Zepto or jQuery on your code.
-
-5) Include the uvepe8 player and your animation json.
+4) Include the uvepe8 player and your animation json.
 
 ```
 <script src="uvepe8.js"></script>
 <script src="my_animation.json"></script>
 ```
 
-6) Create a container where you want the video
+5) Create a container where you want the video
 
 ```
 <div id="uvepe8_video"></div>
 ```
 
-7) Include the player. The first argument is the element where the video will embed, the second is the animation timeline name you specified in the converter script. There's an optional third parameter for autoplay the video, defaults to *true*.
+6) Include the player. The first argument is the element where the video will embed, the second is the animation timeline name you specified in the converter script. There's an optional third parameter for autoplay the video, defaults to *true*.
 
 ```
 window.onload = function() {
@@ -72,13 +70,11 @@ window.onload = function() {
 my_animation = {
     "fps": 30,
     "image": "animation.png",
-    "image_class": "animation_image",
     "width": 250,
     "height": 250,
-    "safe_timing": true,
     "frames": [
         {
-	        "jump": 3,
+	    "jump": 3,
             "diff": [
                 [video_x, video_y, diff_x, diff_y, size_x, size_y],
                 ["..."]
@@ -98,7 +94,6 @@ pngcrush -rem gAMA -rem cHRM -rem iCCP -rem sRGB origial_file.png destination_fi
 
 # TODO
 
-- Dont require libraries. Be standalone.
 - Complete the docs and comment the code ^_^U
 - Information of the algorithms and how to create your own.
 - Read the files in order even if the files are not named propertly.
@@ -108,3 +103,13 @@ pngcrush -rem gAMA -rem cHRM -rem iCCP -rem sRGB origial_file.png destination_fi
 - Order files and code on the main file
 - Integrate [pngcrush](http://pmt.sourceforge.net/pngcrush/)
 - Minimal percentage to count as difference
+
+# LICENSE
+
+See [LICENSE.txt](http://github.com/fmartingr/blog/master/LICENSE.txt)
+
+# NO WARRANTY
+
+THE PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT WITHOUT ANY WARRANTY. IT IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+
+IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW THE AUTHOR WILL BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS), EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
