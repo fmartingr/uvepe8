@@ -103,29 +103,34 @@ uvepe8.prototype =
     @buffer_element.height = @options.height
     @buffer_context = @buffer_element.getContext '2d'
 
+  start_fallback: ->
+    throw "[Sorry. Fallback is not implemented yet. Use a canvas compatible browser.]"
+
     #@next_frame_buffer = document.createElement 'canvas' TODO
 
   init: (dom_object, animation, autostart=true) ->
     @options = animation if animation?
     @options.dom = dom_object if dom_object?
     if @find_framework()
-      @use_canvas = true
+      @use_canvas = @canvas_supported()
       @current_frame = 0
       @dom = @framework(@options.dom)
       @options.timeout = (1000/@options.fps)
-      @image = new Image()
-      @dom.css
-        width: @options.width
-        height: @options.height
-        #background: 'url(' + @options.image + ')'
-        @start_canvas() if @use_canvas
-      @image.src = @options.image
+      if @use_canvas
+        # Canvas support!
+        @image = new Image()
+        @image.src = @options.image
+        @dom.css
+          width: @options.width
+          height: @options.height
+        @start_canvas()
+        @image.onload = =>
+          @image_loaded = true
+          @play() if autostart
+      else
+        # Fallback support TODO
+        @start_fallback()
 
-      #else
-      # Create fallback div
-      @image.onload = =>
-        @image_loaded = true
-        @play() if autostart
     @
 
 window.uvepe8 = uvepe8

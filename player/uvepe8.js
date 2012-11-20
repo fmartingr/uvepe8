@@ -117,6 +117,9 @@
       this.buffer_element.height = this.options.height;
       return this.buffer_context = this.buffer_element.getContext('2d');
     },
+    start_fallback: function() {
+      throw "[Sorry. Fallback is not implemented yet. Use a canvas compatible browser.]";
+    },
     init: function(dom_object, animation, autostart) {
       var _this = this;
       if (autostart == null) {
@@ -129,22 +132,27 @@
         this.options.dom = dom_object;
       }
       if (this.find_framework()) {
-        this.use_canvas = true;
+        this.use_canvas = this.canvas_supported();
         this.current_frame = 0;
         this.dom = this.framework(this.options.dom);
         this.options.timeout = 1000 / this.options.fps;
-        this.image = new Image();
-        this.dom.css({
-          width: this.options.width,
-          height: this.options.height
-        }, this.use_canvas ? this.start_canvas() : void 0);
-        this.image.src = this.options.image;
-        this.image.onload = function() {
-          _this.image_loaded = true;
-          if (autostart) {
-            return _this.play();
-          }
-        };
+        if (this.use_canvas) {
+          this.image = new Image();
+          this.image.src = this.options.image;
+          this.dom.css({
+            width: this.options.width,
+            height: this.options.height
+          });
+          this.start_canvas();
+          this.image.onload = function() {
+            _this.image_loaded = true;
+            if (autostart) {
+              return _this.play();
+            }
+          };
+        } else {
+          this.start_fallback();
+        }
       }
       return this;
     }
