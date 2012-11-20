@@ -24,14 +24,16 @@
         return console.log(string);
       }
     },
-    find_framework: function() {
-      if ((typeof jQuery !== "undefined" && jQuery !== null) || (typeof Zepto !== "undefined" && Zepto !== null)) {
-        this.framework = $;
+    framework: function(selector) {
+      var dom_elements;
+      dom_elements = document.querySelectorAll(selector);
+      dom_elements = Array.prototype.slice.call(dom_elements);
+      if (dom_elements.length > 1) {
+        if (typeof console !== "undefined" && console !== null) {
+          console.error("WARNING: There are more elements with this selector query! Using the first one.");
+        }
       }
-      if (!(this.framework != null)) {
-        throw "[Can't found compatible framwork. Please include Zepto or jQuery.]";
-      }
-      return true;
+      return dom_elements[0];
     },
     canvas_supported: function() {
       var element;
@@ -111,7 +113,7 @@
       this.dom_canvas.width = this.options.width;
       this.dom_canvas.height = this.options.height;
       this.dom_context = this.dom_canvas.getContext('2d');
-      this.dom.append(this.dom_canvas);
+      this.dom.appendChild(this.dom_canvas);
       this.buffer_element = this.create_canvas();
       this.buffer_element.width = this.options.width;
       this.buffer_element.height = this.options.height;
@@ -131,28 +133,24 @@
       if (dom_object != null) {
         this.options.dom = dom_object;
       }
-      if (this.find_framework()) {
-        this.use_canvas = this.canvas_supported();
-        this.current_frame = 0;
-        this.dom = this.framework(this.options.dom);
-        this.options.timeout = 1000 / this.options.fps;
-        if (this.use_canvas) {
-          this.image = new Image();
-          this.image.src = this.options.image;
-          this.dom.css({
-            width: this.options.width,
-            height: this.options.height
-          });
-          this.start_canvas();
-          this.image.onload = function() {
-            _this.image_loaded = true;
-            if (autostart) {
-              return _this.play();
-            }
-          };
-        } else {
-          this.start_fallback();
-        }
+      this.use_canvas = this.canvas_supported();
+      this.current_frame = 0;
+      this.dom = this.framework(this.options.dom);
+      this.options.timeout = 1000 / this.options.fps;
+      if (this.use_canvas) {
+        this.image = new Image();
+        this.image.src = this.options.image;
+        this.dom.style.width = this.options.width;
+        this.dom.style.height = this.options.height;
+        this.start_canvas();
+        this.image.onload = function() {
+          _this.image_loaded = true;
+          if (autostart) {
+            return _this.play();
+          }
+        };
+      } else {
+        this.start_fallback();
       }
       return this;
     }

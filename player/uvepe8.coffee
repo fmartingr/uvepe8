@@ -24,12 +24,12 @@ uvepe8.prototype =
     if @options.log?
       console.log string
   
-  find_framework: ->
-    if jQuery? or Zepto?
-      @framework = $
-    if not @framework?
-      throw "[Can't found compatible framwork. Please include Zepto or jQuery.]"
-    true
+  framework: (selector) ->
+    dom_elements = document.querySelectorAll(selector)
+    dom_elements = Array::slice.call(dom_elements)
+    if dom_elements.length > 1
+      console.error "WARNING: There are more elements with this selector query! Using the first one." if console?
+    dom_elements[0]
 
   canvas_supported: ->
     element = @create_canvas()
@@ -95,7 +95,7 @@ uvepe8.prototype =
     @dom_canvas.width = @options.width
     @dom_canvas.height = @options.height
     @dom_context = @dom_canvas.getContext '2d'
-    @dom.append(@dom_canvas)
+    @dom.appendChild(@dom_canvas)
 
     # BUFFERING
     @buffer_element = @create_canvas()
@@ -111,25 +111,23 @@ uvepe8.prototype =
   init: (dom_object, animation, autostart=true) ->
     @options = animation if animation?
     @options.dom = dom_object if dom_object?
-    if @find_framework()
-      @use_canvas = @canvas_supported()
-      @current_frame = 0
-      @dom = @framework(@options.dom)
-      @options.timeout = (1000/@options.fps)
-      if @use_canvas
-        # Canvas support!
-        @image = new Image()
-        @image.src = @options.image
-        @dom.css
-          width: @options.width
-          height: @options.height
-        @start_canvas()
-        @image.onload = =>
-          @image_loaded = true
-          @play() if autostart
-      else
-        # Fallback support TODO
-        @start_fallback()
+    @use_canvas = @canvas_supported()
+    @current_frame = 0
+    @dom = @framework(@options.dom)
+    @options.timeout = (1000/@options.fps)
+    if @use_canvas
+      # Canvas support!
+      @image = new Image()
+      @image.src = @options.image
+      @dom.style.width = @options.width
+      @dom.style.height = @options.height
+      @start_canvas()
+      @image.onload = =>
+        @image_loaded = true
+        @play() if autostart
+    else
+      # Fallback support TODO
+      @start_fallback()
 
     @
 
