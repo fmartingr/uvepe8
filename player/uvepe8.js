@@ -41,8 +41,7 @@
       return !!(element.getContext('2d'));
     },
     draw_canvas: function() {
-      var destiny_x, destiny_y, diff, empty_array, frame, height, source_x, source_y, width, _i, _len, _ref;
-      empty_array = [];
+      var destiny_x, destiny_y, diff, frame, height, source_x, source_y, width, _i, _len, _ref;
       this.log("Draw frame " + this.current_frame);
       frame = this.get_frame(this.current_frame);
       if (frame !== null) {
@@ -87,7 +86,7 @@
           timeout = timeout * frame.jump;
         }
         this.log("Frame: " + this.current_frame + " with timeout: " + timeout);
-        setTimeout(function() {
+        this.timeout_id = setTimeout(function() {
           return _this.draw();
         }, timeout);
         if (this.use_canvas) {
@@ -104,6 +103,14 @@
       } else {
         return console.error("[Image is not loaded! (is probably loading...)]");
       }
+    },
+    pause: function() {
+      return clearTimeout(this.timeout_id);
+    },
+    stop: function() {
+      this.pause();
+      this.current_frame = 0;
+      return this.draw_canvas();
     },
     create_canvas: function() {
       return document.createElement('canvas');
@@ -134,7 +141,6 @@
         this.options.dom = dom_object;
       }
       this.use_canvas = this.canvas_supported();
-      this.current_frame = 0;
       this.dom = this.framework(this.options.dom);
       this.options.timeout = 1000 / this.options.fps;
       if (this.use_canvas) {
@@ -145,6 +151,7 @@
         this.start_canvas();
         this.image.onload = function() {
           _this.image_loaded = true;
+          _this.stop();
           if (autostart) {
             return _this.play();
           }

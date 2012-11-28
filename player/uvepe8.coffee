@@ -5,15 +5,7 @@
 ###
 
 uvepe8 = (dom_object, animation, autostart) ->
-  #options =
-  #  dom: ""
-  #  width: ""
-  #  height: ""
-  #  frames: ""
-  #  image: ""
-  #  fps: ""
-  #  log
-
+  # Creates new instance or initializates itself
   if not (@ instanceof uvepe8)
     new uvepe8(dom_object, animation, autostart)
   else
@@ -36,7 +28,6 @@ uvepe8.prototype =
     not not (element.getContext('2d'))
 
   draw_canvas: ->
-    empty_array = []
     @log "Draw frame " + @current_frame
     frame = @get_frame(@current_frame)
     if frame isnt null
@@ -71,7 +62,7 @@ uvepe8.prototype =
       timeout = @options.timeout
       timeout = timeout*frame.jump if frame.jump?
       @log "Frame: #{@current_frame} with timeout: #{timeout}"
-      setTimeout(=>
+      @timeout_id = setTimeout(=>
         @draw()
       , timeout)
       if @use_canvas
@@ -85,6 +76,14 @@ uvepe8.prototype =
       @draw()
     else
       console.error "[Image is not loaded! (is probably loading...)]"
+
+  pause: ->
+    clearTimeout @timeout_id
+
+  stop: ->
+    @pause()
+    @current_frame = 0
+    @draw_canvas() #
 
   create_canvas: ->
     document.createElement 'canvas'
@@ -103,16 +102,15 @@ uvepe8.prototype =
     @buffer_element.height = @options.height
     @buffer_context = @buffer_element.getContext '2d'
 
+    # TODO Double buffer @next_frame_buffer = document.createElement 'canvas'
+
   start_fallback: ->
     throw "[Sorry. Fallback is not implemented yet. Use a canvas compatible browser.]"
-
-    #@next_frame_buffer = document.createElement 'canvas' TODO
 
   init: (dom_object, animation, autostart=true) ->
     @options = animation if animation?
     @options.dom = dom_object if dom_object?
     @use_canvas = @canvas_supported()
-    @current_frame = 0
     @dom = @framework(@options.dom)
     @options.timeout = (1000/@options.fps)
     if @use_canvas
@@ -124,9 +122,10 @@ uvepe8.prototype =
       @start_canvas()
       @image.onload = =>
         @image_loaded = true
+        @stop() # Drawing first frame
         @play() if autostart
     else
-      # Fallback support TODO
+      # TODO Fallback support
       @start_fallback()
 
     @
