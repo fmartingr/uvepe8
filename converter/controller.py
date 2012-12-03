@@ -20,7 +20,7 @@ class FrameController(Controller):
     current = -1
     items = []
 
-    def __init__(self, method='Simple'):
+    def __init__(self, method='Simple', difference=100):
         # Load diff method
         module = __import__("diff_methods")
         try:
@@ -29,6 +29,7 @@ class FrameController(Controller):
             print "Cant load %s diff method, using simple..." % method
             method = getattr(module, "SimpleMethod")
         self.method = method()
+        self.method.min_difference = difference
 
     def append(self, path):
         new_item = Frame(self, path)

@@ -59,7 +59,7 @@ if TOTAL_FILES is 0:
     quit(1)
 
 # Staring the controllers
-FRAMES = FrameController()
+FRAMES = FrameController(argument.diff_method, argument.difference)
 DIFFS = DiffController()
 
 # Starting the loop
