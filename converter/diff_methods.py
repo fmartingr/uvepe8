@@ -2,23 +2,23 @@ from objects import Diff
 
 
 class DiffMethod(object):
-    pass
-
+    def __init__(self):
+        self.min_diffrence = 60
 
 class SimpleMethod(DiffMethod):
     """
     Simple PIL getbbox() difference between frames
     """
-    def difference(self, first, second):
+    def difference(self, actual, previous):
         import ImageChops
         from hashlib import md5
-        difference = ImageChops.difference(first, second)
+        difference = ImageChops.difference(actual, previous)
         diff_box = difference.getbbox()
         diffs = []
         if diff_box is not None:
             # If there is any difference, just retrieve the box
             # that has changed in the new frame
-            image = first.crop((diff_box[0],
+            image = actual.crop((diff_box[0],
                                      diff_box[1],
                                      diff_box[2],
                                      diff_box[3]))
