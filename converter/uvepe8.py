@@ -94,8 +94,10 @@ for file in FILES:
                                               diff['size'][0],
                                               diff['size'][1]))
     # Pretty logging is pretty. <3
-    echo("Processing frame (%s)" % ("%d/%d" % (CURRENT_FILE, TOTAL_FILES)), True, False)
+    echo("Processing frames... %s" % ("%d/%d" % (CURRENT_FILE, TOTAL_FILES)), True, False)
     CURRENT_FILE += 1
+
+echo("Processing frames... done!")
 
 # Summary
 print ""
