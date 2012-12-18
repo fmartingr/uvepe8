@@ -92,13 +92,19 @@ Compressing the final PNG has to be done manually at the moment. It's done via `
 pngcrush -rem gAMA -rem cHRM -rem iCCP -rem sRGB origial_file.png destination_file.png
 ```
 
+# Non-modern browser fallback
+
+The fallback uses overlapping `<div>` tags instead of a `<canvas>` elements to draw the scene.
+
+The main player layer will have the `uvepe8-fallback` class for customization, due to render bugs for scenes with transparency.
+
+
 # TODO
 
 - Complete the docs and comment the code ^_^U
 - Information of the algorithms and how to create your own.
 - Read the files in order even if the files are not named propertly.
 - Cleanup of the diff object - diff controller - diffmatrix.
-- Animation fallback to DIVs for IE<9
 - Performance check on browsers
 - Order files and code on the main file
 - Integrate [pngcrush](http://pmt.sourceforge.net/pngcrush/)
