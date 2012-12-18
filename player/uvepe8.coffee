@@ -26,6 +26,7 @@ uvepe8.prototype =
   canvas_supported: ->
     element = @create_canvas()
     not not (element.getContext('2d'))
+    false
 
   draw_canvas: ->
     @log "Draw frame " + @current_frame
@@ -36,19 +37,35 @@ uvepe8.prototype =
       else
         for diff in frame.diff
           @log diff
+          destiny_x = diff[0]
+          destiny_y = diff[1]
           source_x = diff[2]
           source_y = diff[3]
           width = diff[4]
           height = diff[5]
-          destiny_x = diff[0]
-          destiny_y = diff[1]
           @buffer_context.clearRect destiny_x, destiny_y, width, height
+          #@buffer_context.clearRect 0, 0, @options.width, @options.height
           @buffer_context.drawImage(@image, source_x, source_y, width, height, destiny_x, destiny_y, width, height)
       @dom_context.clearRect 0, 0, @options.width, @options.height
       @dom_context.drawImage @buffer_element, 0, 0
 
   draw_fallback: ->
-    @log 'fallback'
+    @log "Draw frame " + @current_frame
+    frame = @get_frame(@current_frame)
+    if frame isnt null
+      if @current_frame is 0 # First frame
+        element = @create_div()
+      else
+        for diff in frame.diff
+          @log diff
+          destiny_x = diff[0]
+          destiny_y = diff[1]
+          source_x = diff[2]
+          source_y = diff[3]
+          width = diff[4]
+          height = diff[5]
+          element = @create_div source_x, source_y, destiny_x, destiny_y, width, height
+      @dom_layer.appendChild element
 
   get_frame: (number) ->
     if @options.frames[number]?
@@ -83,10 +100,24 @@ uvepe8.prototype =
   stop: ->
     @pause()
     @current_frame = 0
-    @draw_canvas() #
+    @draw_canvas() if @use_canvas
 
   create_canvas: ->
     document.createElement 'canvas'
+
+  create_div: (source_x=0, source_y=0, destiny_x=0, destiny_y=0, width=@options.width, height=@options.height) ->
+    layer = document.createElement 'div'
+    layer.style.position = 'absolute'
+    layer.style.left = "#{destiny_x}px"
+    layer.style.top = "#{destiny_y}px"
+    layer.style.backgroundImage = "url(#{@options.image})"
+    #layer.style.backgroundAttachment = "fixed"
+    #layer.style.backgroundPosition = "-#{source_x-width}px -#{source_y-height}px"
+    layer.style.backgroundPosition = "-#{source_x}px -#{source_y}px"
+    layer.style.width = "#{width}px"
+    layer.style.height = "#{height}px"
+    layer.style.zIndex = @current_frame
+    layer
 
   start_canvas: ->
     # DOM
@@ -94,7 +125,7 @@ uvepe8.prototype =
     @dom_canvas.width = @options.width
     @dom_canvas.height = @options.height
     @dom_context = @dom_canvas.getContext '2d'
-    @dom.appendChild(@dom_canvas)
+    @dom.appendChild @dom_canvas
 
     # BUFFERING
     @buffer_element = @create_canvas()
@@ -105,7 +136,10 @@ uvepe8.prototype =
     # TODO Double buffer @next_frame_buffer = document.createElement 'canvas'
 
   start_fallback: ->
-    throw "[Sorry. Fallback is not implemented yet. Use a canvas compatible browser.]"
+    @dom_layer = @create_div()
+    @dom_layer.style.position = 'relative'
+    @dom_layer.className = 'uvepe8-fallback'
+    @dom.appendChild @dom_layer
 
   init: (dom_object, animation, autostart=true) ->
     @options = animation if animation?
@@ -113,21 +147,20 @@ uvepe8.prototype =
     @use_canvas = @canvas_supported()
     @dom = @framework(@options.dom)
     @options.timeout = (1000/@options.fps)
+    @image = new Image()
+    @image.src = @options.image
+    @dom.style.width = @options.width
+    @dom.style.height = @options.height
     if @use_canvas
       # Canvas support!
-      @image = new Image()
-      @image.src = @options.image
-      @dom.style.width = @options.width
-      @dom.style.height = @options.height
       @start_canvas()
-      @image.onload = =>
-        @image_loaded = true
-        @stop() # Drawing first frame
-        @play() if autostart
     else
       # TODO Fallback support
       @start_fallback()
-
+    @image.onload = =>
+      @image_loaded = true
+      @stop() # Drawing first frame
+      @play() if autostart
     @
 
 window.uvepe8 = uvepe8

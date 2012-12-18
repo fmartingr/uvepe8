@@ -38,7 +38,8 @@
     canvas_supported: function() {
       var element;
       element = this.create_canvas();
-      return !!(element.getContext('2d'));
+      !!(element.getContext('2d'));
+      return false;
     },
     draw_canvas: function() {
       var destiny_x, destiny_y, diff, frame, height, source_x, source_y, width, _i, _len, _ref;
@@ -52,12 +53,12 @@
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             diff = _ref[_i];
             this.log(diff);
+            destiny_x = diff[0];
+            destiny_y = diff[1];
             source_x = diff[2];
             source_y = diff[3];
             width = diff[4];
             height = diff[5];
-            destiny_x = diff[0];
-            destiny_y = diff[1];
             this.buffer_context.clearRect(destiny_x, destiny_y, width, height);
             this.buffer_context.drawImage(this.image, source_x, source_y, width, height, destiny_x, destiny_y, width, height);
           }
@@ -67,7 +68,28 @@
       }
     },
     draw_fallback: function() {
-      return this.log('fallback');
+      var destiny_x, destiny_y, diff, element, frame, height, source_x, source_y, width, _i, _len, _ref;
+      this.log("Draw frame " + this.current_frame);
+      frame = this.get_frame(this.current_frame);
+      if (frame !== null) {
+        if (this.current_frame === 0) {
+          element = this.create_div();
+        } else {
+          _ref = frame.diff;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            diff = _ref[_i];
+            this.log(diff);
+            destiny_x = diff[0];
+            destiny_y = diff[1];
+            source_x = diff[2];
+            source_y = diff[3];
+            width = diff[4];
+            height = diff[5];
+            element = this.create_div(source_x, source_y, destiny_x, destiny_y, width, height);
+          }
+        }
+        return this.dom_layer.appendChild(element);
+      }
     },
     get_frame: function(number) {
       if (this.options.frames[number] != null) {
@@ -110,10 +132,43 @@
     stop: function() {
       this.pause();
       this.current_frame = 0;
-      return this.draw_canvas();
+      if (this.use_canvas) {
+        return this.draw_canvas();
+      }
     },
     create_canvas: function() {
       return document.createElement('canvas');
+    },
+    create_div: function(source_x, source_y, destiny_x, destiny_y, width, height) {
+      var layer;
+      if (source_x == null) {
+        source_x = 0;
+      }
+      if (source_y == null) {
+        source_y = 0;
+      }
+      if (destiny_x == null) {
+        destiny_x = 0;
+      }
+      if (destiny_y == null) {
+        destiny_y = 0;
+      }
+      if (width == null) {
+        width = this.options.width;
+      }
+      if (height == null) {
+        height = this.options.height;
+      }
+      layer = document.createElement('div');
+      layer.style.position = 'absolute';
+      layer.style.left = "" + destiny_x + "px";
+      layer.style.top = "" + destiny_y + "px";
+      layer.style.backgroundImage = "url(" + this.options.image + ")";
+      layer.style.backgroundPosition = "-" + source_x + "px -" + source_y + "px";
+      layer.style.width = "" + width + "px";
+      layer.style.height = "" + height + "px";
+      layer.style.zIndex = this.current_frame;
+      return layer;
     },
     start_canvas: function() {
       this.dom_canvas = this.create_canvas();
@@ -127,7 +182,10 @@
       return this.buffer_context = this.buffer_element.getContext('2d');
     },
     start_fallback: function() {
-      throw "[Sorry. Fallback is not implemented yet. Use a canvas compatible browser.]";
+      this.dom_layer = this.create_div();
+      this.dom_layer.style.position = 'relative';
+      this.dom_layer.className = 'uvepe8-fallback';
+      return this.dom.appendChild(this.dom_layer);
     },
     init: function(dom_object, animation, autostart) {
       var _this = this;
@@ -143,22 +201,22 @@
       this.use_canvas = this.canvas_supported();
       this.dom = this.framework(this.options.dom);
       this.options.timeout = 1000 / this.options.fps;
+      this.image = new Image();
+      this.image.src = this.options.image;
+      this.dom.style.width = this.options.width;
+      this.dom.style.height = this.options.height;
       if (this.use_canvas) {
-        this.image = new Image();
-        this.image.src = this.options.image;
-        this.dom.style.width = this.options.width;
-        this.dom.style.height = this.options.height;
         this.start_canvas();
-        this.image.onload = function() {
-          _this.image_loaded = true;
-          _this.stop();
-          if (autostart) {
-            return _this.play();
-          }
-        };
       } else {
         this.start_fallback();
       }
+      this.image.onload = function() {
+        _this.image_loaded = true;
+        _this.stop();
+        if (autostart) {
+          return _this.play();
+        }
+      };
       return this;
     }
   };
