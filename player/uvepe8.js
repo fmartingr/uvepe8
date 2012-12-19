@@ -85,6 +85,9 @@
             width = diff[4];
             height = diff[5];
             element = this.create_div(source_x, source_y, destiny_x, destiny_y, width, height);
+            if (width === this.options.width && height === this.options.height) {
+              element.style.className = 'full-sized-frame';
+            }
           }
         }
         return this.dom_layer.appendChild(element);

@@ -64,6 +64,8 @@ uvepe8.prototype =
           width = diff[4]
           height = diff[5]
           element = @create_div source_x, source_y, destiny_x, destiny_y, width, height
+          if width is @options.width and height is @options.height
+            element.style.className = 'full-sized-frame'
       @dom_layer.appendChild element
 
   get_frame: (number) ->
