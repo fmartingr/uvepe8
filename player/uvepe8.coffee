@@ -26,7 +26,6 @@ uvepe8.prototype =
   canvas_supported: ->
     element = @create_canvas()
     not not (element.getContext('2d'))
-    false
 
   draw_canvas: ->
     @log "Draw frame " + @current_frame

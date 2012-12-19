@@ -38,8 +38,7 @@
     canvas_supported: function() {
       var element;
       element = this.create_canvas();
-      !!(element.getContext('2d'));
-      return false;
+      return !!(element.getContext('2d'));
     },
     draw_canvas: function() {
       var destiny_x, destiny_y, diff, frame, height, source_x, source_y, width, _i, _len, _ref;
