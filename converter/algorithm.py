@@ -11,13 +11,13 @@ class BinaryTreeNode(object):
     height = 0
     down = None
     right = None
-    
+
     def __init__(self, block=None):
         if block is not None:
             self.diff_key = block['diff_key']
             self.width = block['width']
             self.height = block['height']
-        
+
 
 class BinaryTreeAlgorithm(Algorithm):
     root = None
@@ -31,7 +31,8 @@ class BinaryTreeAlgorithm(Algorithm):
     def __init__(self, width=0, height=0):
         self.max_size['width'] = width
         self.max_size['height'] = height
-        if height > 0: self.growing = 'right'
+        if width > height:
+            self.growing = 'right'
 
     def fit(self, block):
         if self.root is None:
@@ -50,7 +51,7 @@ class BinaryTreeAlgorithm(Algorithm):
         if node.used:
             return self.find(node.right, block) or self.find(node.down, block)
         elif block['width'] <= node.width and block['height'] <= node.height:
-           return node
+            return node
         else:
             return None
 
@@ -74,18 +75,18 @@ class BinaryTreeAlgorithm(Algorithm):
         return node
 
     def grow(self, block):
-        if self.grow == 'down':
+        if self.growing == 'down':
             self.root.used = True
             self.root.x = 0
             self.root.y = 0
-            self.root.height = self.root.height + block['height']
             self.root.down = BinaryTreeNode()
+            self.root.right = BinaryTreeNode()
             self.root.down.x = 0
             self.root.down.y = self.root.height
             self.root.down.width = self.root.width
             self.root.down.height = block['height']
-            self.root.width = self.root.width,
-            self.root.right = BinaryTreeNode()
+            self.root.height = self.root.height + block['height']
+            self.root.width = self.root.width
         else:
             self.root.used = True
             self.root.x = 0
@@ -98,6 +99,11 @@ class BinaryTreeAlgorithm(Algorithm):
             self.root.right.height = self.root.height
             self.root.height = self.root.height
             self.root.width = self.root.width + block['width']
+
+        if self.root.height > self.root.width:
+            self.growing = 'right'
+        else:
+            self.growing = 'down'
 
         node = self.find(self.root, block)
         if node is not None:
