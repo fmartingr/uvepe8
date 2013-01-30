@@ -1,5 +1,5 @@
 from objects import Frame, Diff
-import diff_methods
+#import diff_methods
 
 
 class Controller(object):
@@ -12,7 +12,7 @@ class Controller(object):
 
     def get_previous(self):
         if self.current > 0:
-            return self.items[self.current-1]
+            return self.items[self.current - 1]
 
 
 class FrameController(Controller):
@@ -20,7 +20,7 @@ class FrameController(Controller):
     current = -1
     items = []
 
-    def __init__(self, method='Simple'):
+    def __init__(self, method='Grid'):
         # Load diff method
         module = __import__("diff_methods")
         try:

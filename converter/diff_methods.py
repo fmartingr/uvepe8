@@ -1,4 +1,4 @@
-from objects import Diff
+#from objects import Diff
 
 
 class DiffMethod(object):
@@ -26,10 +26,10 @@ class SimpleMethod(DiffMethod):
             position = (diff_box[0], diff_box[1])
             hash = str(md5(image.tostring()).hexdigest())
             diff = {
-                "hash": hash, # Hash of the diff for checking if portion is repeated (md5 string)
-                "image": image, # Portion of the image <Image>
-                "position": position, # Position of the portion in the frame (x, y)
-                "size": size # Size of the portion (x, y)
+                "hash": hash,  # Hash of the diff for checking if portion is repeated (md5 string)
+                "image": image,  # Portion of the image <Image>
+                "position": position,  # Position of the portion in the frame (x, y)
+                "size": size  # Size of the portion (x, y)
             }
             diffs.append(diff)
 

@@ -16,15 +16,18 @@ import Image
 #from random import randint
 import json
 
+
 def echo(string, cr=True, newline=True):
     """
     Custom print function
     cr = prints carriage return (before string!)
     newline = prints newline
     """
-    if cr: stdout.write("\r")
+    if cr:
+        stdout.write("\r")
     stdout.write(string)
-    if newline: stdout.write("\n")
+    if newline:
+        stdout.write("\n")
     stdout.flush()
 
 parser = argparse.ArgumentParser(description="Your videos, now in <canvas>", )
@@ -102,7 +105,9 @@ print "-- Summary --"
 print "Total frames: %d" % TOTAL_FILES
 print "Total frames saved: %d" % len(FRAMES.items)
 print "Total diffs saved: %d" % len(DIFFS.items)
+print "-------------"
 print ""
+
 
 class DiffMatrix(object):
     min_x = 0
@@ -111,7 +116,7 @@ class DiffMatrix(object):
     max_x = 0
     max_y = 0
 
-    squares = [] # (diff key, x, y, size x, size y)
+    squares = []  # (diff key, x, y, size x, size y)
 
     algorithm = None
     controller = None
@@ -152,7 +157,6 @@ class DiffMatrix(object):
             final_image.paste(image, box)
 
         final_image.save("%s.png" % argument.name)
-
 
 
 # Sort DIFFs by size
@@ -206,3 +210,5 @@ json = json.dumps(animation)
 file = open("%s.json" % argument.name, "w")
 file.write("%s = %s" % (argument.name, json))
 file.close()
+
+print "Finished!"
