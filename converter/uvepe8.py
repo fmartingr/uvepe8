@@ -37,12 +37,15 @@ parser.add_argument('folder', help="Folder with the PNG frames", )
 parser.add_argument('name', help="Animation name", )
 
 # Optional arguments
-#parser.add_argument('-m', '--diff-method', default="Simple",
-#    help="Diff method (default: Simple)",
-#    choices=['Simple'])
+parser.add_argument('-m', '--diff-method', default="Simple",
+    help="Diff method (default: Simple)",
+    choices=['Simple', 'Grid'])
 parser.add_argument('-fps', default=30, help="FPS (default: 30)", )
 parser.add_argument('-t', '--filetype', default="png", help="Frame filetype (default png)")
 parser.add_argument('-c', '--compress', help="Compress PNG with pngcrush", action="store_true", )
+
+# Optional arguments for Grid method
+#parser.add_argument('--squaresize', default="2,2", help="GridMethod: Square size for portions")
 
 # Parsing
 argument = parser.parse_args()
@@ -61,7 +64,7 @@ if TOTAL_FILES is 0:
     quit(1)
 
 # Staring the controllers
-FRAMES = FrameController()
+FRAMES = FrameController(argument.diff_method)
 DIFFS = DiffController()
 
 # Starting the loop

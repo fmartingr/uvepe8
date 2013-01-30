@@ -20,7 +20,7 @@ class FrameController(Controller):
     current = -1
     items = []
 
-    def __init__(self, method='Grid'):
+    def __init__(self, method='Simple'):
         # Load diff method
         module = __import__("diff_methods")
         try:
