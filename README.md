@@ -112,7 +112,7 @@ The main player layer will have the `uvepe8-fallback` class for customization, d
 
 # LICENSE
 
-See [LICENSE.txt](http://github.com/fmartingr/blog/master/LICENSE.txt)
+See [LICENSE.txt](https://raw.github.com/fmartingr/uvepe8/master/LICENSE.txt)
 
 # NO WARRANTY
 
